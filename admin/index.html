@@ -1,0 +1,1103 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>后台管理 - 导航站</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Microsoft YaHei', sans-serif;
+            background: #ffffff;
+            min-height: 100vh;
+        }
+
+        .header {
+            background: #ffffff;
+            color: #333;
+            padding: 20px 30px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        .header h1 {
+            font-size: 1.5em;
+            color: #333;
+        }
+
+        .header-actions {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+        }
+
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 0.9em;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .btn-primary {
+            background: #007bff;
+            color: white;
+            font-weight: 600;
+            border: 2px solid #007bff;
+        }
+
+        .btn-primary:hover {
+            background: #0056b3;
+            border-color: #0056b3;
+            transform: translateY(-2px);
+        }
+
+        .btn-success {
+            background: #007bff;
+            color: white;
+            font-weight: 600;
+        }
+
+        .btn-success:hover {
+            background: #0056b3;
+            transform: translateY(-2px);
+        }
+
+        .btn-danger {
+            background: #ef4444;
+            color: white;
+            font-weight: 600;
+        }
+
+        .btn-danger:hover {
+            background: #dc2626;
+        }
+
+        .btn-secondary {
+            background: #6b7280;
+            color: white;
+        }
+
+        .btn-secondary:hover {
+            background: #4b5563;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 30px auto;
+            padding: 0 20px;
+        }
+
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .stat-icon {
+            width: 60px;
+            height: 60px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 28px;
+            background: transparent;
+            color: #333;
+        }
+
+        .stat-info h3 {
+            font-size: 2em;
+            color: #333;
+            margin-bottom: 5px;
+        }
+
+        .stat-info p {
+            color: #666;
+            font-size: 0.9em;
+        }
+
+        .content-section {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+
+        .section-header {
+            padding: 20px 25px;
+            border-bottom: 2px solid #f0f0f0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .section-header h2 {
+            font-size: 1.3em;
+            color: #333;
+        }
+
+        .table-container {
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        thead {
+            background: #f9fafb;
+        }
+
+        th {
+            padding: 15px 20px;
+            text-align: left;
+            font-weight: 600;
+            color: #666;
+            font-size: 0.9em;
+            border-bottom: 2px solid #e5e7eb;
+        }
+
+        td {
+            padding: 18px 20px;
+            border-bottom: 1px solid #f0f0f0;
+            color: #333;
+        }
+
+        tbody tr {
+            transition: background 0.2s ease;
+        }
+
+        tbody tr:hover {
+            background: #f9fafb;
+        }
+
+        .site-info {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .site-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 8px;
+            background: transparent;
+            color: #333;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            flex-shrink: 0;
+        }
+
+        .site-details h4 {
+            font-size: 0.95em;
+            color: #333;
+            margin-bottom: 3px;
+        }
+
+        .site-details p {
+            font-size: 0.85em;
+            color: #999;
+        }
+
+        .category-tag {
+            display: inline-block;
+            padding: 5px 12px;
+            background: #e0e7ff;
+            color: #007bff;
+            border-radius: 20px;
+            font-size: 0.85em;
+            font-weight: 500;
+        }
+
+        .actions {
+            display: flex;
+            gap: 8px;
+        }
+
+        .btn-sm {
+            padding: 6px 14px;
+            font-size: 0.85em;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background: white;
+            border-radius: 16px;
+            padding: 30px;
+            max-width: 600px;
+            width: 90%;
+            max-height: 90vh;
+            overflow-y: auto;
+            animation: modalSlideIn 0.3s ease;
+        }
+
+        @keyframes modalSlideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .modal-header {
+            margin-bottom: 25px;
+        }
+
+        .modal-header h3 {
+            font-size: 1.5em;
+            color: #333;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            color: #333;
+            font-weight: 600;
+            margin-bottom: 8px;
+            font-size: 0.9em;
+        }
+
+        .form-group input,
+        .form-group textarea,
+        .form-group select {
+            width: 100%;
+            padding: 12px 16px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 0.95em;
+            transition: all 0.3s ease;
+            outline: none;
+            font-family: inherit;
+        }
+
+        .form-group input:focus,
+        .form-group textarea:focus,
+        .form-group select:focus {
+            border-color: #007bff;
+            box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.1);
+        }
+
+        .form-group textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+
+        .modal-footer {
+            display: flex;
+            gap: 10px;
+            justify-content: flex-end;
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 2px solid #f0f0f0;
+        }
+
+        .alert {
+            padding: 12px 16px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            font-size: 0.9em;
+            display: none;
+        }
+
+        .alert-error {
+            background: #fee;
+            color: #c33;
+            border: 1px solid #fcc;
+        }
+
+        .alert-success {
+            background: #efe;
+            color: #3c3;
+            border: 1px solid #cfc;
+        }
+
+        @media (max-width: 768px) {
+            .stats {
+                grid-template-columns: 1fr;
+            }
+
+            .table-container {
+                font-size: 0.9em;
+            }
+
+            th, td {
+                padding: 12px 15px;
+            }
+
+            .actions {
+                flex-direction: column;
+            }
+
+            .header {
+                flex-direction: column;
+                gap: 15px;
+            }
+
+            .header-actions {
+                width: 100%;
+                justify-content: space-between;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>📊 导航站后台管理</h1>
+        <div class="header-actions">
+            <a href="/daohang/index.html" class="btn btn-primary" id="frontLink">查看前台</a>
+            <button class="btn btn-danger" onclick="logout()">退出登录</button>
+        </div>
+    </div>
+
+    <div class="container">
+        <div id="alert" class="alert"></div>
+
+        <div class="stats">
+            <div class="stat-card">
+                <div class="stat-icon">📚</div>
+                <div class="stat-info">
+                    <h3 id="totalSites">0</h3>
+                    <p>网站总数</p>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon">📂</div>
+                <div class="stat-info">
+                    <h3 id="totalCategories">0</h3>
+                    <p>分类数量</p>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon">👀</div>
+                <div class="stat-info">
+                    <h3 id="todayVisits">0</h3>
+                    <p>今日访问</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="content-section">
+            <div class="section-header">
+                <h2>网站管理</h2>
+                <div style="display: flex; gap: 10px;">
+                    <button class="btn btn-success" onclick="openImportModal()">📥 导入书签</button>
+                    <button class="btn btn-success" onclick="openAddModal()">+ 添加网站</button>
+                </div>
+            </div>
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>网站信息</th>
+                            <th>分类</th>
+                            <th>网址</th>
+                            <th>描述</th>
+                            <th>操作</th>
+                        </tr>
+                    </thead>
+                    <tbody id="sitesTable">
+                        <tr>
+                            <td colspan="5" style="text-align: center; padding: 40px;">
+                                加载中...
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div id="paginationContainer" style="padding: 20px; display: flex; justify-content: space-between; align-items: center; border-top: 2px solid #f0f0f0;">
+                <div style="color: #666; font-size: 0.9em;">
+                    共 <strong id="totalCount" style="color: #007bff;">0</strong> 条记录
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 添加/编辑网站模态框 -->
+    <div id="siteModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="modalTitle">添加网站</h3>
+            </div>
+            <form id="siteForm">
+                <input type="hidden" id="siteId" name="id">
+
+                <div class="form-group">
+                    <label for="siteName">网站名称 *</label>
+                    <input type="text" id="siteName" name="name" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="siteUrl">网站网址 *</label>
+                    <input type="text" id="siteUrl" name="url" required placeholder="https://example.com" onblur="validateAndFetchMetadata()">
+                    <small style="color: #666; font-size: 0.85em; margin-top: 5px; display: block;">输入网址后自动获取标题和图标(必须以http://或https://开头)</small>
+                </div>
+
+                <div class="form-group">
+                    <label for="siteIcon">网站图标</label>
+                    <div style="display: flex; gap: 10px; align-items: center;">
+                        <input type="text" id="siteIcon" name="icon" placeholder="🌐" style="flex: 1;">
+                        <img id="iconPreview" src="" style="width: 40px; height: 40px; border-radius: 8px; display: none; border: 2px solid #e0e0e0;">
+                    </div>
+                    <small style="color: #666; font-size: 0.85em; margin-top: 5px; display: block;">可以输入emoji或自动获取网站图标</small>
+                </div>
+
+                <div class="form-group">
+                    <label for="siteCategory">分类 *</label>
+                    <select id="siteCategory" name="category" required>
+                        <option value="">选择分类</option>
+                        <option value="在线工具">📚 在线工具 & 实用查询</option>
+                        <option value="安全工具">🛡️ 安全工具 & 测绘平台</option>
+                        <option value="开发运维">💻 开发运维 & 主机服务</option>
+                        <option value="网络域名">🌐 网络 & 域名工具</option>
+                        <option value="技术教程">📚 技术教程 & 社区</option>
+                        <option value="AI工具">🤖 AI工具 & 其他</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="siteDescription">网站描述 *</label>
+                    <textarea id="siteDescription" name="description" required></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label for="siteKeywords">关键词 (用空格分隔)</label>
+                    <input type="text" id="siteKeywords" name="keywords" placeholder="工具 在线 查询">
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" onclick="closeModal()">取消</button>
+                    <button type="submit" class="btn btn-success">保存</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- 导入书签模态框 -->
+    <div id="importModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>📥 导入书签文件</h3>
+            </div>
+            <form id="importForm">
+                <div class="form-group">
+                    <label for="bookmarkFile">选择书签文件 *</label>
+                    <input type="file" id="bookmarkFile" name="bookmarkFile" accept=".html,.htm" required style="padding: 10px;">
+                    <small style="color: #666; font-size: 0.85em; margin-top: 5px; display: block;">
+                        支持 Netscape 书签格式 (Chrome、Firefox、Edge 导出的书签文件)
+                    </small>
+                </div>
+
+                <div class="form-group">
+                    <label style="display: flex; align-items: center; gap: 10px; cursor: pointer;">
+                        <input type="checkbox" id="checkDuplicates" name="checkDuplicates" checked style="width: auto; cursor: pointer;">
+                        <span>跳过重复的网址</span>
+                    </label>
+                    <small style="color: #666; font-size: 0.85em; margin-top: 5px; display: block;">
+                        勾选后将自动跳过数据库中已存在的网址
+                    </small>
+                </div>
+
+                <div id="importProgress" style="display: none; margin: 20px 0;">
+                    <div style="background: #f0f0f0; height: 8px; border-radius: 4px; overflow: hidden;">
+                        <div id="progressBar" style="background: #007bff; height: 100%; width: 0%; transition: width 0.3s ease;"></div>
+                    </div>
+                    <p id="progressText" style="text-align: center; margin-top: 10px; color: #666; font-size: 0.9em;"></p>
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" onclick="closeImportModal()">取消</button>
+                    <button type="submit" class="btn btn-success" id="importBtn">开始导入</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // 自动检测基础路径
+        const BASE_PATH = window.location.pathname.includes('/daohang/') ? '/daohang' : '';
+
+        // 检查登录状态
+        function checkAuth() {
+            const token = localStorage.getItem('admin_token');
+            if (!token) {
+                window.location.href = `${BASE_PATH}/admin/login.html`;
+                return false;
+            }
+            return true;
+        }
+
+        // 退出登录
+        function logout() {
+            if (confirm('确定要退出登录吗?')) {
+                localStorage.removeItem('admin_token');
+                window.location.href = `${BASE_PATH}/admin/login.html`;
+            }
+        }
+
+        // 显示提示
+        function showAlert(message, type = 'success') {
+            const alertDiv = document.getElementById('alert');
+            alertDiv.textContent = message;
+            alertDiv.className = `alert alert-${type}`;
+            alertDiv.style.display = 'block';
+            
+            setTimeout(() => {
+                alertDiv.style.display = 'none';
+            }, 3000);
+        }
+
+        // 打开添加模态框
+        function openAddModal() {
+            document.getElementById('modalTitle').textContent = '添加网站';
+            document.getElementById('siteForm').reset();
+            document.getElementById('siteId').value = '';
+            document.getElementById('siteModal').classList.add('active');
+        }
+
+        // 打开编辑模态框
+        function openEditModal(site) {
+            document.getElementById('modalTitle').textContent = '编辑网站';
+            document.getElementById('siteId').value = site.id;
+            document.getElementById('siteName').value = site.name;
+            document.getElementById('siteUrl').value = site.url;
+            document.getElementById('siteIcon').value = site.icon || '';
+            document.getElementById('siteCategory').value = site.category;
+            document.getElementById('siteDescription').value = site.description;
+            document.getElementById('siteKeywords').value = site.keywords || '';
+            document.getElementById('siteModal').classList.add('active');
+        }
+
+        // 关闭模态框
+        function closeModal() {
+            document.getElementById('siteModal').classList.remove('active');
+        }
+
+        // 打开导入模态框
+        function openImportModal() {
+            document.getElementById('importForm').reset();
+            document.getElementById('importProgress').style.display = 'none';
+            document.getElementById('importModal').classList.add('active');
+        }
+
+        // 关闭导入模态框
+        function closeImportModal() {
+            document.getElementById('importModal').classList.remove('active');
+        }
+
+        // 导入书签
+        document.getElementById('importForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const fileInput = document.getElementById('bookmarkFile');
+            const checkDuplicates = document.getElementById('checkDuplicates').checked;
+            const importBtn = document.getElementById('importBtn');
+            const progressDiv = document.getElementById('importProgress');
+            const progressBar = document.getElementById('progressBar');
+            const progressText = document.getElementById('progressText');
+
+            if (!fileInput.files || !fileInput.files[0]) {
+                showAlert('请选择文件', 'error');
+                return;
+            }
+
+            const file = fileInput.files[0];
+
+            // 验证文件类型
+            if (!file.name.toLowerCase().endsWith('.html') && !file.name.toLowerCase().endsWith('.htm')) {
+                showAlert('请选择HTML格式的书签文件', 'error');
+                return;
+            }
+
+            // 显示进度条
+            progressDiv.style.display = 'block';
+            progressBar.style.width = '30%';
+            progressText.textContent = '正在上传文件...';
+            importBtn.disabled = true;
+
+            try {
+                const formData = new FormData();
+                formData.append('bookmarkFile', file);
+                formData.append('checkDuplicates', checkDuplicates);
+
+                progressBar.style.width = '50%';
+                progressText.textContent = '正在解析书签...';
+
+                const response = await fetch(`${BASE_PATH}/api/import_bookmarks.php`, {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': 'Bearer ' + localStorage.getItem('admin_token')
+                    },
+                    body: formData
+                });
+
+                const data = await response.json();
+
+                progressBar.style.width = '100%';
+
+                if (data.success) {
+                    progressText.textContent = `导入成功！共 ${data.data.total} 条，成功 ${data.data.imported} 条，跳过 ${data.data.skipped} 条`;
+
+                    if (data.data.errors && data.data.errors.length > 0) {
+                        console.warn('导入警告:', data.data.errors);
+                    }
+
+                    showAlert(data.message, 'success');
+
+                    // 延迟关闭并刷新列表
+                    setTimeout(() => {
+                        closeImportModal();
+                        loadSites();
+                    }, 2000);
+                } else {
+                    progressText.textContent = '导入失败';
+                    console.error('Import error:', data);
+                    const errorMsg = data.message || '导入失败，请重试';
+                    if (data.error_detail) {
+                        console.error('Error detail:', data.error_detail);
+                    }
+                    showAlert(errorMsg, 'error');
+                }
+            } catch (error) {
+                console.error('导入失败:', error);
+                progressText.textContent = '导入失败';
+                showAlert('导入失败，请检查文件格式或网络连接', 'error');
+            } finally {
+                importBtn.disabled = false;
+            }
+        });
+
+        // 加载网站列表
+        async function loadSites() {
+            try {
+                const response = await fetch(`${BASE_PATH}/api/sites.php`, {
+                    headers: {
+                        'Authorization': 'Bearer ' + localStorage.getItem('admin_token')
+                    }
+                });
+
+                if (!response.ok) {
+                    throw new Error('加载失败');
+                }
+
+                const data = await response.json();
+                renderSites(data.sites || []);
+                updateStats(data.sites || []);
+            } catch (error) {
+                console.error('加载网站列表失败:', error);
+                document.getElementById('sitesTable').innerHTML = `
+                    <tr>
+                        <td colspan="5" style="text-align: center; padding: 40px; color: #999;">
+                            加载失败，请刷新重试
+                        </td>
+                    </tr>
+                `;
+            }
+        }
+
+        // 渲染网站列表（按分类分组）
+        function renderSites(sites) {
+            const tbody = document.getElementById('sitesTable');
+            
+            // 更新总记录数
+            document.getElementById('totalCount').textContent = sites.length;
+            
+            if (sites.length === 0) {
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="5" style="text-align: center; padding: 40px; color: #999;">
+                            暂无网站数据，点击右上角添加网站
+                        </td>
+                    </tr>
+                `;
+                return;
+            }
+
+            // 按分类分组
+            const groupedSites = {};
+            sites.forEach(site => {
+                const category = site.category || '未分类';
+                if (!groupedSites[category]) {
+                    groupedSites[category] = [];
+                }
+                groupedSites[category].push(site);
+            });
+
+            // 定义分类顺序和图标
+            const categoryOrder = [
+                { name: '在线工具', icon: '📚' },
+                { name: '安全工具', icon: '🛡️' },
+                { name: '开发运维', icon: '💻' },
+                { name: '网络域名', icon: '🌐' },
+                { name: '技术教程', icon: '📚' },
+                { name: 'AI工具', icon: '🤖' },
+                { name: '未分类', icon: '📂' }
+            ];
+
+            let html = '';
+            categoryOrder.forEach(cat => {
+                const categorySites = groupedSites[cat.name];
+                if (!categorySites || categorySites.length === 0) return;
+
+                // 添加分类标题行
+                html += `
+                    <tr style="background: #007bff; cursor: pointer;"
+                        onclick="toggleCategory('${cat.name}')">
+                        <td colspan="5" style="padding: 15px 20px; color: white; font-weight: 600; font-size: 1.05em;">
+                            <div style="display: flex; align-items: center; gap: 10px;">
+                                <span style="font-size: 1.2em;">${cat.icon}</span>
+                                <span>${cat.name}</span>
+                                <span style="background: rgba(255,255,255,0.3); padding: 3px 10px; border-radius: 12px; font-size: 0.85em;">
+                                    ${categorySites.length} 个网站
+                                </span>
+                                <span id="toggle-${cat.name}" style="margin-left: auto; font-size: 0.9em;">▼</span>
+                            </div>
+                        </td>
+                    </tr>
+                `;
+
+                // 添加该分类下的所有网站
+                categorySites.forEach(site => {
+                    const isIconUrl = site.icon && (site.icon.startsWith('http') || site.icon.startsWith('//'));
+                    const iconHtml = isIconUrl
+                        ? `<img src="${site.icon}" style="width: 32px; height: 32px; border-radius: 6px;" onerror="this.style.display='none';this.parentElement.innerHTML='🌐';">`
+                        : (site.icon || '🌐');
+                    
+                    html += `
+                    <tr class="category-${cat.name}" data-category="${cat.name}">
+                        <td>
+                            <div class="site-info">
+                                <div class="site-icon">${iconHtml}</div>
+                                <div class="site-details">
+                                    <h4>${site.name}</h4>
+                                    <p>${new URL(site.url).hostname}</p>
+                                </div>
+                            </div>
+                        </td>
+                        <td>
+                            <span class="category-tag">${site.category}</span>
+                        </td>
+                        <td>
+                            <a href="${site.url}" target="_blank" style="color: #007bff; text-decoration: none;">
+                                访问
+                            </a>
+                        </td>
+                        <td style="max-width: 300px;">
+                            ${site.description}
+                        </td>
+                        <td>
+                            <div class="actions">
+                                <button class="btn btn-primary btn-sm" onclick='editSite(${JSON.stringify(site).replace(/'/g, "&apos;")})'>
+                                    编辑
+                                </button>
+                                <button class="btn btn-danger btn-sm" onclick="deleteSite(${site.id})">
+                                    删除
+                                </button>
+                            </div>
+                        </td>
+                    </tr>`;
+                });
+            });
+
+            tbody.innerHTML = html;
+        }
+
+        // 切换分类展开/收起
+        function toggleCategory(categoryName) {
+            const rows = document.querySelectorAll(`.category-${categoryName}`);
+            const toggle = document.getElementById(`toggle-${categoryName}`);
+            
+            rows.forEach(row => {
+                if (row.style.display === 'none') {
+                    row.style.display = '';
+                } else {
+                    row.style.display = 'none';
+                }
+            });
+            
+            if (toggle) {
+                toggle.textContent = toggle.textContent === '▼' ? '▶' : '▼';
+            }
+        }
+
+        // 更新统计数据
+        async function updateStats(sites) {
+            document.getElementById('totalSites').textContent = sites.length;
+            const categories = new Set(sites.map(s => s.category));
+            document.getElementById('totalCategories').textContent = categories.size;
+            
+            // 获取真实访问统计
+            try {
+                const response = await fetch(`${BASE_PATH}/api/visitor.php`);
+                const data = await response.json();
+                if (data.success) {
+                    document.getElementById('todayVisits').textContent = data.today_visits || 0;
+                }
+            } catch (error) {
+                console.error('获取访问统计失败:', error);
+                document.getElementById('todayVisits').textContent = 0;
+            }
+        }
+
+        // 编辑网站
+        function editSite(site) {
+            openEditModal(site);
+        }
+
+        // 删除网站
+        async function deleteSite(id) {
+            if (!confirm('确定要删除这个网站吗?')) {
+                return;
+            }
+
+            try {
+                const response = await fetch(`${BASE_PATH}/api/sites.php?id=${id}`, {
+                    method: 'DELETE',
+                    headers: {
+                        'Authorization': 'Bearer ' + localStorage.getItem('admin_token')
+                    }
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    showAlert('删除成功', 'success');
+                    loadSites();
+                } else {
+                    showAlert(data.message || '删除失败', 'error');
+                }
+            } catch (error) {
+                showAlert('删除失败，请重试', 'error');
+                console.error('删除失败:', error);
+            }
+        }
+
+        // 保存网站
+        document.getElementById('siteForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const formData = new FormData(e.target);
+            const siteData = Object.fromEntries(formData.entries());
+            
+            // 验证URL格式
+            const url = siteData.url ? siteData.url.trim() : '';
+            if (!url.startsWith('http://') && !url.startsWith('https://')) {
+                showAlert('网址必须以 http:// 或 https:// 开头', 'error');
+                return;
+            }
+            siteData.url = url;
+            
+            // 检查图标是否为URL，如果是则保留，否则确保有值
+            const iconValue = siteData.icon ? siteData.icon.trim() : '';
+            if (!iconValue) {
+                siteData.icon = '🌐';
+            }
+
+            try {
+                const url = siteData.id ? `${BASE_PATH}/api/sites.php?id=${siteData.id}` : `${BASE_PATH}/api/sites.php`;
+                const method = siteData.id ? 'PUT' : 'POST';
+
+                const response = await fetch(url, {
+                    method: method,
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': 'Bearer ' + localStorage.getItem('admin_token')
+                    },
+                    body: JSON.stringify(siteData)
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    showAlert(siteData.id ? '更新成功' : '添加成功', 'success');
+                    closeModal();
+                    loadSites();
+                } else {
+                    showAlert(data.message || '操作失败', 'error');
+                }
+            } catch (error) {
+                showAlert('操作失败: ' + error.message, 'error');
+                console.error('保存失败:', error);
+            }
+        });
+
+        // 点击模态框外部关闭
+        document.getElementById('siteModal').addEventListener('click', (e) => {
+            if (e.target === e.currentTarget) {
+                closeModal();
+            }
+        });
+
+        document.getElementById('importModal').addEventListener('click', (e) => {
+            if (e.target === e.currentTarget) {
+                closeImportModal();
+            }
+        });
+
+        // 获取网站元数据
+        let isFetchingMetadata = false;
+        
+        // URL验证和获取元数据
+        async function validateAndFetchMetadata() {
+            const urlInput = document.getElementById('siteUrl');
+            const url = urlInput.value.trim();
+            
+            // 验证URL格式
+            if (url && !url.startsWith('http://') && !url.startsWith('https://')) {
+                showAlert('网址必须以 http:// 或 https:// 开头', 'error');
+                return;
+            }
+            
+            await fetchMetadata();
+        }
+        
+        async function fetchMetadata() {
+            const urlInput = document.getElementById('siteUrl');
+            const url = urlInput.value.trim();
+            
+            // 如果正在获取或URL为空或在编辑模式，则不自动获取
+            if (isFetchingMetadata || !url || document.getElementById('siteId').value) {
+                return;
+            }
+            
+            // 验证URL格式
+            try {
+                new URL(url);
+            } catch {
+                return;
+            }
+            
+            isFetchingMetadata = true;
+            const nameInput = document.getElementById('siteName');
+            const iconInput = document.getElementById('siteIcon');
+            const descInput = document.getElementById('siteDescription');
+            const iconPreview = document.getElementById('iconPreview');
+            
+            // 显示加载状态
+            const originalPlaceholder = nameInput.placeholder;
+            nameInput.placeholder = '正在获取网站信息...';
+            nameInput.disabled = true;
+            
+            try {
+                const response = await fetch(`${BASE_PATH}/api/fetch_metadata.php`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': 'Bearer ' + localStorage.getItem('admin_token')
+                    },
+                    body: JSON.stringify({ url: url })
+                });
+                
+                const data = await response.json();
+                
+                if (data.success && data.data) {
+                    // 自动填充标题
+                    if (data.data.title && !nameInput.value) {
+                        nameInput.value = data.data.title;
+                    }
+                    
+                    // 处理图标
+                    if (data.data.icon) {
+                        // 显示图标预览
+                        iconPreview.src = data.data.icon;
+                        iconPreview.style.display = 'block';
+                        iconPreview.onerror = function() {
+                            this.style.display = 'none';
+                            if (!iconInput.value) {
+                                iconInput.value = '🌐';
+                            }
+                        };
+                        
+                        // 将图标URL存储到hidden input或直接使用
+                        if (!iconInput.value) {
+                            iconInput.value = data.data.icon;
+                        }
+                    } else {
+                        iconPreview.style.display = 'none';
+                        if (!iconInput.value) {
+                            iconInput.value = '🌐';
+                        }
+                    }
+                    
+                    // 自动填充描述
+                    if (data.data.description && !descInput.value) {
+                        descInput.value = data.data.description;
+                    }
+                    
+                    showAlert('已自动获取网站信息', 'success');
+                } else {
+                    // 获取失败，使用默认图标
+                    if (!iconInput.value) {
+                        iconInput.value = '🌐';
+                    }
+                    iconPreview.style.display = 'none';
+                }
+            } catch (error) {
+                console.error('获取元数据失败:', error);
+                if (!iconInput.value) {
+                    iconInput.value = '🌐';
+                }
+                iconPreview.style.display = 'none';
+            } finally {
+                nameInput.placeholder = originalPlaceholder;
+                nameInput.disabled = false;
+                isFetchingMetadata = false;
+            }
+        }
+        
+        // 页面加载时检查认证并加载数据
+        if (checkAuth()) {
+            // 设置动态链接
+            document.getElementById('frontLink').href = `${BASE_PATH}/index.html`;
+            loadSites();
+        }
+    </script>
+</body>
+</html>
